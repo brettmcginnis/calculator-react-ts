@@ -1,35 +1,87 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+import "./App.css";
 
-function App() {
-  const [count, setCount] = useState(0)
-
+export default function App() {
+  const [currNum, setCurrNum] = useState<number | null>(null);
+  const [op, setOp] = useState('');
+  const [secondNum, setSecondNum] = useState<number | null>(null);
+  const [hasCalculated, setHasCalculated] = useState(false);
+  function handleNumInput(num: number) {
+    if (hasCalculated) {
+      setCurrNum(num);
+    }
+    if (currNum === null) {
+      setCurrNum(num);
+    }
+    else if (currNum && !op) {
+      setCurrNum(prevNum => Number(String(prevNum) + String(num)));
+    }
+    else if (currNum && op && secondNum) {
+      setSecondNum(prevNum => Number(String(prevNum) + String(num)));
+    }
+    else if (currNum && op) {
+      setSecondNum(num);
+    }
+  }
+  function handleOpInput(op: string) {
+    if (currNum) {
+      setOp(op);
+    }
+  }
+  function handleEquals() {
+    if (currNum && op && secondNum) {
+      setCurrNum(calculateFirst());
+      setSecondNum(null);
+      setOp('');
+      setHasCalculated(true);
+    }
+  }
+  function calculateFirst(): number {
+    return Number(eval(String(currNum) + op + String(secondNum)));
+  }
+  function showDisplay(): string {
+    let display: string[] = [];
+    if (currNum !== null) {
+      display.push(String(currNum));
+    }
+    if (op !== '') {
+      display.push(op);
+    }
+    if (secondNum !== null) {
+      display = [String(secondNum)];
+    }
+    return display.join('');
+  }
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+      <h1>Calculator</h1>
+      <div className="calc-container">
+        <div className="calc-display">{showDisplay()}</div>
+        <div className="calc-btns">
+          <button>MC</button>
+          <button>M+</button>
+          <button>/</button>
+          <button>X</button>
+          <button onClick={() => handleNumInput(7)}>7</button>
+          <button onClick={() => handleNumInput(8)}>8</button>
+          <button onClick={() => handleNumInput(9)}>9</button>
+          <button onClick={() => handleOpInput("-")}>-</button>
+          <button onClick={() => handleNumInput(4)}>4</button>
+          <button onClick={() => handleNumInput(5)}>5</button>
+          <button onClick={() => handleNumInput(6)}>6</button>
+          <button onClick={() => handleOpInput("+")}>+</button>
+          <button onClick={() => handleNumInput(1)}>1</button>
+          <button onClick={() => handleNumInput(2)}>2</button>
+          <button onClick={() => handleNumInput(3)}>3</button>
+          <button onClick={handleEquals} id="equals">
+            =
+          </button>
+          <button onClick={() => handleNumInput(0)} id="zero">
+            0
+          </button>
+          <button>.</button>
+        </div>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </>
-  )
+  );
 }
-
-export default App
