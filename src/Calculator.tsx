@@ -1,5 +1,6 @@
 import { useState } from "react";
-import "./App.css";
+import Display from './Display'
+import "./Calculator.css";
 
 export default function App() {
   const [currNum, setCurrNum] = useState<number | null>(null);
@@ -7,10 +8,7 @@ export default function App() {
   const [secondNum, setSecondNum] = useState<number | null>(null);
   const [hasCalculated, setHasCalculated] = useState(false);
   function handleNumInput(num: number) {
-    if (hasCalculated) {
-      setCurrNum(num);
-    }
-    if (currNum === null) {
+    if (hasCalculated || currNum === null) {
       setCurrNum(num);
     }
     else if (currNum && !op) {
@@ -23,11 +21,11 @@ export default function App() {
       setSecondNum(num);
     }
   }
+  
   function handleOpInput(op: string) {
-    if (currNum) {
-      setOp(op);
-    }
+    if (currNum) setOp(op)
   }
+
   function handleEquals() {
     if (currNum && op && secondNum) {
       setCurrNum(calculateFirst());
@@ -36,27 +34,16 @@ export default function App() {
       setHasCalculated(true);
     }
   }
+
   function calculateFirst(): number {
     return Number(eval(String(currNum) + op + String(secondNum)));
   }
-  function showDisplay(): string {
-    let display: string[] = [];
-    if (currNum !== null) {
-      display.push(String(currNum));
-    }
-    if (op !== '') {
-      display.push(op);
-    }
-    if (secondNum !== null) {
-      display = [String(secondNum)];
-    }
-    return display.join('');
-  }
+
   return (
     <>
       <h1>Calculator</h1>
       <div className="calc-container">
-        <div className="calc-display">{showDisplay()}</div>
+        <Display currentNumber={currNum} operator={op} secondNumber={secondNum} />
         <div className="calc-btns">
           <button>MC</button>
           <button>M+</button>
